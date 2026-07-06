@@ -25,6 +25,7 @@ model Batch {
   dealer    Dealer    @relation(fields: [dealerId], references: [id])
   supplier  Supplier  @relation(fields: [supplierId], references: [id])
   events    TraceabilityEvent[]
+  scans     ScanEvent[]
   complaints Complaint[]
 
   @@index([dealerId])
@@ -55,7 +56,6 @@ model Supplier {
   createdAt      DateTime @default(now())
 
   batches    Batch[]
-  complaints Complaint[]
 }
 
 // ── Farmer ──
@@ -104,9 +104,8 @@ model Complaint {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  batch    Batch    @relation(fields: [batchId], references: [id])
-  farmer   Farmer   @relation(fields: [farmerId], references: [id])
-  supplier Supplier @relation(fields: [batchId], references: [id])
+  batch  Batch  @relation(fields: [batchId], references: [id])
+  farmer Farmer @relation(fields: [farmerId], references: [id])
 
   @@index([batchId])
   @@index([status])

@@ -57,7 +57,9 @@ export function verifySignature(qrData: QrCodeData): {
       .update(data)
       .digest("base64url");
 
-    if (!crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(qrData.signature))) {
+    const expectedBuf = Buffer.from(expected);
+    const actualBuf = Buffer.from(qrData.signature);
+    if (expectedBuf.length !== actualBuf.length || !crypto.timingSafeEqual(expectedBuf, actualBuf)) {
       return { valid: false, reason: "Signature mismatch — QR may be counterfeit" };
     }
 

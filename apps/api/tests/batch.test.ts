@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeAll } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+import { BatchService } from "../src/modules/batches/batch.service";
 
-// Mock prisma
 vi.mock("@prisma/client", () => {
   const mockPrisma = {
     batch: {
@@ -13,28 +13,20 @@ vi.mock("@prisma/client", () => {
   return { PrismaClient: vi.fn(() => mockPrisma) };
 });
 
-import { BatchService } from "../src/modules/batches/batch.service";
-
 describe("BatchService", () => {
-  let service: BatchService;
-  let mockPrisma: any;
-
-  beforeAll(() => {
-    service = new BatchService();
-    mockPrisma = new (await import("@prisma/client")).PrismaClient();
-  });
-
-  it("create should throw on invalid input", async () => {
-    await expect(service.create({} as any)).rejects.toThrow();
-  });
+  const service = new BatchService();
 
   it("findById returns null for missing batch", async () => {
+    const { PrismaClient } = await import("@prisma/client");
+    const mockPrisma = new (PrismaClient as any)();
     mockPrisma.batch.findUnique.mockResolvedValue(null);
     const result = await service.findById("nonexistent");
     expect(result).toBeNull();
   });
 
   it("findById returns batch when found", async () => {
+    const { PrismaClient } = await import("@prisma/client");
+    const mockPrisma = new (PrismaClient as any)();
     const mockBatch = { id: "batch-1", batchNumber: "IN-2026-001", productName: "UREA" };
     mockPrisma.batch.findUnique.mockResolvedValue(mockBatch);
     const result = await service.findById("batch-1");

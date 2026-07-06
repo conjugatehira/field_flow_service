@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "npm run dev:api",
     "dev:api": "npm run dev -w @fieldflow/api",
     "dev:farmer": "npm run dev -w @fieldflow/farmer-app",
     "dev:dealer": "npm run dev -w @fieldflow/dealer-portal",
