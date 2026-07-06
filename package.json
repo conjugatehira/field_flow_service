@@ -1,0 +1,17 @@
+{
+  "name": "fieldflow",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w @fieldflow/api",
+    "dev:farmer": "npm run dev -w @fieldflow/farmer-app",
+    "dev:dealer": "npm run dev -w @fieldflow/dealer-portal",
+    "build": "npm run build -ws",
+    "test": "npm run test -ws",
+    "migrate": "npm run migrate -w @fieldflow/api",
+    "seed": "npm run seed -w @fieldflow/api"
+  }
+}

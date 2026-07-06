@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldFlow · Dealer Dashboard</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f7f6;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---------- SIDEBAR ---------- */
+        .sidebar {
+            width: 280px;
+            background: #0f2b1f;
+            color: #e0e7e3;
+            display: flex;
+            flex-direction: column;
+            padding: 30px 20px;
+            flex-shrink: 0;
+            box-shadow: 4px 0 12px rgba(0,0,0,0.08);
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 40px;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar .logo i {
+            color: #7ecf8a;
+            font-size: 32px;
+        }
+
+        .sidebar .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            color: #b2c9be;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s;
+            cursor: default;
+            margin-bottom: 6px;
+        }
+
+        .sidebar .nav-item i {
+            width: 22px;
+            font-size: 18px;
+            color: #7a9b8b;
+        }
+
+        .sidebar .nav-item.active {
+            background: #1f4030;
+            color: #ffffff;
+        }
+
+        .sidebar .nav-item.active i {
+            color: #7ecf8a;
+        }
+
+        .sidebar .nav-item:not(.active):hover {
+            background: #1a3427;
+            color: #d4e3db;
+        }
+
+        .sidebar .bottom-links {
+            margin-top: auto;
+            border-top: 1px solid #264435;
+            padding-top: 24px;
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 24px 32px 32px 32px;
+            background: #f4f7f6;
+        }
+
+        /* Top Header */
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .top-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0f2b1f;
+        }
+
+        .top-header .sub {
+            font-size: 14px;
+            color: #5e7a6b;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .top-header .right-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .top-header .badge-offline {
+            background: #ffedd5;
+            color: #b45309;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-header .badge-offline i {
+            font-size: 14px;
+            color: #d97706;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            background: #1f4030;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 20px 24px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #eaf0ed;
+            transition: 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: #bdd6cb;
+        }
+
+        .stat-card .label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #6f8d7d;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            font-size: 30px;
+            font-weight: 700;
+            color: #0f2b1f;
+            margin-top: 6px;
+        }
+
+        .stat-card .sub-line {
+            font-size: 13px;
+            color: #4b6b5b;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-card .sub-line i {
+            font-size: 14px;
+        }
+
+        .stat-card .sub-line.warning i {
+            color: #d97706;
+        }
+
+        .stat-card .sub-line.success i {
+            color: #16a34a;
+        }
+
+        /* Two-column layout */
+        .row-2col {
+            display: grid;
+            grid-template-columns: 1.3fr 0.7fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .card-panel {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 22px 24px;
+            border: 1px solid #eaf0ed;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .card-panel h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f2b1f;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-panel h3 a {
+            font-size: 13px;
+            font-weight: 500;
+            color: #1d7a4f;
+            text-decoration: none;
+        }
+
+        /* Batch Registration Form */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            flex: 1 0 calc(50% - 14px);
+            min-width: 160px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #3e5f4e;
+            margin-bottom: 4px;
+            letter-spacing: 0.3px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid #d6e3dd;
+            font-size: 14px;
+            background: #fafcfb;
+            transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1d7a4f;
+            box-shadow: 0 0 0 3px rgba(29, 122, 79, 0.15);
+        }
+
+        .btn-primary {
+            background: #1d7a4f;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: default;
+            transition: 0.2s;
+            border: 1px solid #1a6b44;
+            margin-top: 4px;
+        }
+
+        .btn-primary i {
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background: #156b44;
+        }
+
+        .qr-preview {
+            margin-top: 12px;
+            background: #f0f6f2;
+            padding: 12px 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border: 1px dashed #8bb3a0;
+        }
+
+        .qr-preview i {
+            font-size: 36px;
+            color: #1d7a4f;
+        }
+
+        .qr-preview span {
+            font-size: 13px;
+            color: #2b4e3d;
+        }
+
+        .qr-preview strong {
+            font-weight: 700;
+            color: #0f2b1f;
+        }
+
+        /* Counterfeit Alerts Table */
+        .alert-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .alert-table th {
+            text-align: left;
+            font-weight: 600;
+            color: #4b6b5b;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e6eeea;
+        }
+
+        .alert-table td {
+            padding: 12px 0;
+            border-bottom: 1px solid #eff5f1;
+        }
+
+        .alert-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            background: #fef2f2;
+            color: #b91c1c;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 40px;
+            display: inline-block;
+        }
+
+        .status-badge.verified {
+            background: #e0f2e6;
+            color: #136d44;
+        }
+
+        .status-badge.pending {
+            background: #fef9e7;
+            color: #a16207;
+        }
+
+        .action-icon {
+            color: #6f8d7d;
+            margin-right: 10px;
+            font-size: 16px;
+            cursor: default;
+            transition: 0.2s;
+        }
+
+        .action-icon:hover {
+            color: #1d7a4f;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .row-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+                padding: 20px 12px;
+            }
+            .sidebar .logo span,
+            .sidebar .nav-item span {
+                display: none;
+            }
+            .sidebar .logo {
+                justify-content: center;
+            }
+            .sidebar .nav-item {
+                justify-content: center;
+                padding: 14px 0;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .top-header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fas fa-seedling"></i>
+            <span>FieldFlow</span>
+        </div>
+
+        <div class="nav-item active">
+            <i class="fas fa-chart-pie"></i> <span>Dashboard</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-boxes"></i> <span>Batches</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-qrcode"></i> <span>Scan History</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-flag"></i> <span>Complaints</span>
+            <span style="margin-left:auto; background:#b91c1c; color:white; padding:0 8px; border-radius:20px; font-size:11px;">4</span>
+        </div>
+        <div class="nav-item">
+            <i class="fas fa-truck"></i> <span>Traceability</span>
+        </div>
+
+        <div class="bottom-links">
+            <div class="nav-item">
+                <i class="fas fa-cog"></i> <span>Settings</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ========== MAIN ========== -->
+    <main class="main">
+
+        <!-- Header -->
+        <div class="top-header">
+            <div>
+                <h1>Dealer Dashboard</h1>
+                <div class="sub">
+                    <i class="fas fa-store"></i> Alam Store · Mymensingh Sadar
+                    <span style="margin-left:12px; background:#d1e7dd; color:#0b4d32; padding:2px 12px; border-radius:40px; font-size:12px;">
+                        <i class="fas fa-check-circle"></i> Verified Dealer
+                    </span>
+                </div>
+            </div>
+            <div class="right-actions">
+                <div class="badge-offline">
+                    <i class="fas fa-cloud-sun"></i> Online · Sync OK
+                </div>
+                <div class="avatar">AR</div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Total Batches</div>
+                <div class="value">48</div>
+                <div class="sub-line success"><i class="fas fa-arrow-up"></i> +6 this month</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Farmer Scans (Today)</div>
+                <div class="value">142</div>
+                <div class="sub-line success"><i class="fas fa-check-circle"></i> 138 verified</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Counterfeit Alerts</div>
+                <div class="value" style="color:#b91c1c;">4</div>
+                <div class="sub-line warning"><i class="fas fa-exclamation-triangle"></i> 2 need escalation</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">SMS Advisory Sent</div>
+                <div class="value">1,284</div>
+                <div class="sub-line success"><i class="fas fa-check-circle"></i> 98% delivered</div>
+            </div>
+        </div>
+
+        <!-- Two Column: Register + Alerts -->
+        <div class="row-2col">
+
+            <!-- LEFT: Register New Batch -->
+            <div class="card-panel">
+                <h3>
+                    <span><i class="fas fa-qrcode" style="margin-right:10px; color:#1d7a4f;"></i> Register New Batch</span>
+                    <a href="#"><i class="fas fa-print"></i> Print QR Labels</a>
+                </h3>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Input Type</label>
+                        <select>
+                            <option>Fertilizer</option>
+                            <option>Pesticide</option>
+                            <option>Seed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" value="UREA 46% N" placeholder="e.g. DAP, UREA">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantity (Kg/Ltr)</label>
+                        <input type="number" value="500">
+                    </div>
+                    <div class="form-group">
+                        <label>Supplier License #</label>
+                        <input type="text" value="SUP-2026-8842" placeholder="Auto-linked to traceability">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Manufacturing Date</label>
+                        <input type="date" value="2026-01-15">
+                    </div>
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="date" value="2028-01-15">
+                    </div>
+                </div>
+
+                <button class="btn-primary"><i class="fas fa-plus-circle"></i> Generate QR Codes (50 units)</button>
+
+                <!-- QR Preview -->
+                <div class="qr-preview">
+                    <i class="fas fa-qrcode"></i>
+                    <div>
+                        <strong>Sample QR Preview</strong><br>
+                        <span>Batch: <strong>#IN-2026-4421</strong> · Encrypted · Exp: 2028</span>
+                    </div>
+                    <span style="margin-left:auto; background:#1d7a4f; color:white; padding:2px 14px; border-radius:40px; font-size:12px;">Ready</span>
+                </div>
+            </div>
+
+            <!-- RIGHT: Counterfeit Alerts / Complaints -->
+            <div class="card-panel">
+                <h3>
+                    <span><i class="fas fa-flag" style="margin-right:10px; color:#b91c1c;"></i> Counterfeit Alerts</span>
+                    <a href="#">View all</a>
+                </h3>
+
+                <table class="alert-table">
+                    <thead>
+                        <tr>
+                            <th>Batch</th>
+                            <th>Farmer</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>PEST-332</strong></td>
+                            <td>Karim (Mymensingh)</td>
+                            <td><span class="status-badge">⚠️ Fake</span></td>
+                            <td>
+                                <i class="fas fa-eye action-icon" title="View"></i>
+                                <i class="fas fa-share action-icon" title="Escalate to Supplier" style="color:#b45309;"></i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>UREA-551</strong></td>
+                            <td>Rohim (Netrokona)</td>
+                            <td><span class="status-badge pending">⏳ Pending</span></td>
+                            <td>
+                                <i class="fas fa-eye action-icon"></i>
+                                <i class="fas fa-check action-icon" style="color:#16a34a;" title="Acknowledge"></i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>SEED-902</strong></td>
+                            <td>Jabbar (Kishoreganj)</td>
+                            <td><span class="status-badge">⚠️ Fake</span></td>
+                            <td>
+                                <i class="fas fa-eye action-icon"></i>
+                                <i class="fas fa-share action-icon" style="color:#b45309;"></i>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>PEST-118</strong></td>
+                            <td>Shahin (Jamalpur)</td>
+                            <td><span class="status-badge verified">✅ Resolved</span></td>
+                            <td>
+                                <i class="fas fa-eye action-icon"></i>
+                                <i class="fas fa-check-double action-icon" style="color:#1d7a4f;" title="Closed"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-top:16px; background:#f0f7f3; border-radius:12px; padding:12px 16px; font-size:13px; display:flex; align-items:center; gap:12px;">
+                    <i class="fas fa-link" style="color:#1d7a4f;"></i>
+                    <span><strong>Traceability:</strong> 2 counterfeit batches linked to Supplier <strong>AgroCorp Ltd.</strong> 
+                    <a href="#" style="color:#1d7a4f; font-weight:600; margin-left:8px;">View Graph →</a></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom: Recent Scan Feed (Live) -->
+        <div class="card-panel" style="margin-bottom:0;">
+            <h3>
+                <span><i class="fas fa-sync-alt fa-fw" style="margin-right:10px; color:#1d7a4f;"></i> Live Farmer Scans</span>
+                <span style="font-weight:400; font-size:13px; color:#4b6b5b;"><i class="fas fa-circle" style="color:#22c55e; font-size:10px;"></i> 12 scans in last 30 min</span>
+            </h3>
+            <div style="display:flex; flex-wrap:wrap; gap:14px; font-size:14px;">
+                <span><i class="fas fa-check-circle" style="color:#16a34a;"></i> Rahim scanned <strong>UREA-4421</strong> (Verified) · 2 min ago</span>
+                <span><i class="fas fa-check-circle" style="color:#16a34a;"></i> Mita scanned <strong>DAP-771</strong> (Verified) · 15 min ago</span>
+                <span><i class="fas fa-times-circle" style="color:#b91c1c;"></i> Samir scanned <strong>PEST-332</strong> (⚠️ Counterfeit) · 28 min ago</span>
+                <span style="background:#eaf0ed; padding:0 12px; border-radius:30px; color:#3e5f4e;">
+                    <i class="fas fa-cloud-upload-alt"></i> Offline sync: 3 scans queued
+                </span>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>
