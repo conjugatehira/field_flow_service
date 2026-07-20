@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FieldFlow - Admin Portal</title>
+  <link rel="stylesheet" href="/styles/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar">
+      <div class="logo"><i class="fas fa-seedling"></i><span>FieldFlow</span></div>
+      <nav>
+        <a href="#" class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+        <a href="#" class="nav-item" data-page="users"><i class="fas fa-users"></i><span>Users</span></a>
+        <a href="#" class="nav-item" data-page="batches"><i class="fas fa-boxes"></i><span>All Batches</span></a>
+        <a href="#" class="nav-item" data-page="complaints"><i class="fas fa-flag"></i><span>Complaints</span></a>
+        <a href="#" class="nav-item" data-page="suppliers"><i class="fas fa-truck"></i><span>Suppliers</span></a>
+        <a href="#" class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
+      </nav>
+      <div class="user-info">
+        <div class="avatar">AD</div>
+        <div><div class="name">Admin</div><div class="role">Admin</div></div>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="top-header">
+        <div><h1 id="page-title">Dashboard</h1><span class="subtitle">Admin Portal</span></div>
+        <div class="header-actions">
+          <div class="connection-status online"><i class="fas fa-cloud-sun"></i><span>Online</span></div>
+          <button class="btn btn-primary btn-sm" onclick="refreshData()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
+      </header>
+      <section class="stats-grid" id="stats-grid">
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-number" id="stat-users">0</div><div class="stat-label">Total Users</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-boxes"></i></div><div class="stat-number" id="stat-batches">0</div><div class="stat-label">Total Batches</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-flag"></i></div><div class="stat-number" id="stat-complaints">0</div><div class="stat-label">Complaints</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-number" id="stat-verified">0%</div><div class="stat-label">Verification Rate</div></div>
+      </section>
+      <div id="page-content">
+        <div class="page active" id="page-dashboard">
+          <div class="dashboard-grid" style="grid-template-columns:1fr 1fr">
+            <div class="card"><h2><i class="fas fa-users"></i> Recent Users</h2><div id="user-list" style="color:var(--text-secondary)">Loading...</div></div>
+            <div class="card"><h2><i class="fas fa-flag"></i> Recent Complaints</h2><div id="complaint-list" style="color:var(--text-secondary)">Loading...</div></div>
+          </div>
+        </div>
+        <div class="page" id="page-users">
+          <div class="card"><h2><i class="fas fa-users"></i> All Users</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Phone</th><th>Role</th><th>Upazila</th></tr></thead><tbody id="user-table"></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-batches">
+          <div class="card"><h2><i class="fas fa-boxes"></i> All Batches</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Product</th><th>Dealer</th><th>Status</th><th>Created</th></tr></thead><tbody id="batch-table"></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-complaints">
+          <div class="card"><h2><i class="fas fa-flag"></i> All Complaints</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Product</th><th>Farmer</th><th>Status</th><th>Routed To</th></tr></thead><tbody id="complaint-table"></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-suppliers">
+          <div class="card"><h2><i class="fas fa-truck"></i> Manage Suppliers</h2>
+            <form id="supplier-form" style="margin-bottom:16px;display:flex;gap:8px">
+              <input id="sup-name" placeholder="Supplier name" required style="flex:2">
+              <input id="sup-contact" placeholder="Phone" style="flex:1">
+              <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+            <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Contact</th><th>ID</th></tr></thead><tbody id="supplier-table"></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-settings">
+          <div class="card"><h2><i class="fas fa-cog"></i> Settings</h2>
+            <button class="btn btn-secondary" onclick="localStorage.removeItem('token');window.location.href='/auth/login'" style="margin-top:12px">Logout</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast"><i id="toast-icon" class="fas fa-check-circle"></i><span id="toast-message">Success!</span></div>
+  <script src="/scripts/admin.js"></script>
+</body>
+</html>

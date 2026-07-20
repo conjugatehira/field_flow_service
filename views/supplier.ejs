@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FieldFlow - Supplier Portal</title>
+  <link rel="stylesheet" href="/styles/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar">
+      <div class="logo"><i class="fas fa-seedling"></i><span>FieldFlow</span></div>
+      <nav>
+        <a href="#" class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+        <a href="#" class="nav-item" data-page="complaints"><i class="fas fa-flag"></i><span>Complaints</span></a>
+        <a href="#" class="nav-item" data-page="batches"><i class="fas fa-boxes"></i><span>My Batches</span></a>
+        <a href="#" class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
+      </nav>
+      <div class="user-info">
+        <div class="avatar">SP</div>
+        <div><div class="name">Supplier</div><div class="role">Supplier</div></div>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="top-header">
+        <div><h1 id="page-title">Dashboard</h1><span class="subtitle">Supplier Portal</span></div>
+        <div class="header-actions">
+          <div class="connection-status online"><i class="fas fa-cloud-sun"></i><span>Online</span></div>
+          <button class="btn btn-primary btn-sm" onclick="refreshData()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
+      </header>
+      <section class="stats-grid">
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-flag"></i></div><div class="stat-number" id="stat-pending">0</div><div class="stat-label">Pending Complaints</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-number" id="stat-total">0</div><div class="stat-label">Total Complaints</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-number" id="stat-flagged">0</div><div class="stat-label">Flagged Batches</div></div>
+      </section>
+      <div id="page-content">
+        <div class="page active" id="page-dashboard">
+          <div class="card"><h2><i class="fas fa-flag"></i> Complaints Against My Products</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Product</th><th>Dealer</th><th>Farmer</th><th>Status</th><th>Action</th></tr></thead><tbody id="complaint-feed"></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-complaints">
+          <div class="card"><h2><i class="fas fa-flag"></i> All Complaints</h2>
+            <div class="table-wrapper"><table><thead><tr><th>ID</th><th>Product</th><th>Dealer</th><th>Status</th><th>Action</th></tr></thead><tbody id="complaint-table"></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-batches">
+          <div class="card"><h2><i class="fas fa-boxes"></i> My Supplied Batches</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Product</th><th>Dealer</th><th>QR</th><th>Status</th></tr></thead><tbody id="batch-table"></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-settings">
+          <div class="card"><h2><i class="fas fa-cog"></i> Settings</h2><p style="color:var(--text-secondary)">Account settings.</p>
+            <button class="btn btn-secondary" onclick="localStorage.removeItem('token');window.location.href='/auth/login'" style="margin-top:12px">Logout</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast"><i id="toast-icon" class="fas fa-check-circle"></i><span id="toast-message">Success!</span></div>
+  <script src="/scripts/supplier.js"></script>
+</body>
+</html>

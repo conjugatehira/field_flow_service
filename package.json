@@ -1,18 +1,22 @@
 {
   "name": "fieldflow",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "version": "1.0.0",
+  "description": "Agri-input traceability & advisory for smallholder farmers",
+  "main": "server.js",
   "scripts": {
-    "dev": "npm run dev:api",
-    "dev:api": "npm run dev -w @fieldflow/api",
-    "dev:farmer": "npm run dev -w @fieldflow/farmer-app",
-    "dev:dealer": "npm run dev -w @fieldflow/dealer-portal",
-    "build": "npm run build -ws",
-    "test": "npm run test -ws",
-    "migrate": "npm run migrate -w @fieldflow/api",
-    "seed": "npm run seed -w @fieldflow/api"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node db/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "better-sqlite3": "^12.11.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.0",
+    "qrcode": "^1.5.4"
   }
 }

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FieldFlow - Dealer Portal</title>
+    <link rel="stylesheet" href="/styles/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="fas fa-seedling"></i>
+                <span>FieldFlow</span>
+            </div>
+            <nav>
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-page="batches">
+                    <i class="fas fa-boxes"></i>
+                    <span>Batches</span>
+                </a>
+                <a href="#" class="nav-item" data-page="qr-generator">
+                    <i class="fas fa-qrcode"></i>
+                    <span>QR Generator</span>
+                </a>
+                <a href="#" class="nav-item" data-page="scans">
+                    <i class="fas fa-camera"></i>
+                    <span>Scan Log</span>
+                </a>
+                <a href="#" class="nav-item" data-page="complaints">
+                    <i class="fas fa-flag"></i>
+                    <span>Complaints</span>
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <div class="user-info">
+                <div class="avatar">DR</div>
+                <div>
+                    <div class="name">Dealer</div>
+                    <div class="role">Dealer</div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1 id="page-title">Dashboard</h1>
+                    <span class="subtitle">FieldFlow · Dealer Portal</span>
+                </div>
+                <div class="header-actions">
+                    <div class="connection-status online">
+                        <i class="fas fa-cloud-sun"></i>
+                        <span>Online</span>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="refreshData()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+            </header>
+
+            <section class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-boxes"></i></div>
+                    <div class="stat-number" id="stat-batches">0</div>
+                    <div class="stat-label">Batches</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-qrcode"></i></div>
+                    <div class="stat-number" id="stat-scans">0</div>
+                    <div class="stat-label">Scans Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-number" id="stat-complaints">0</div>
+                    <div class="stat-label">Complaints</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-number" id="stat-verified">0%</div>
+                    <div class="stat-label">Verified Products</div>
+                </div>
+            </section>
+
+            <div id="page-content">
+                <div class="page active" id="page-dashboard">
+                    <div class="card">
+                        <h2><i class="fas fa-chart-bar"></i> Overview</h2>
+                        <div class="dashboard-grid">
+                            <div class="dashboard-item">
+                                <h3>Recent Scans</h3>
+                                <div class="scan-feed" id="scan-feed">
+                                    <div class="scan-item"><i class="fas fa-spinner fa-pulse"></i><span>Loading...</span></div>
+                                </div>
+                            </div>
+                            <div class="dashboard-item">
+                                <h3>Latest Batches</h3>
+                                <div class="scan-feed" id="batch-feed">
+                                    <div class="scan-item"><i class="fas fa-spinner fa-pulse"></i><span>Loading...</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-batches">
+                    <div class="card">
+                        <h2><i class="fas fa-boxes"></i> All Batches</h2>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead><tr><th>Product</th><th>Type</th><th>QR Code</th><th>Status</th><th>Created</th></tr></thead>
+                                <tbody id="batch-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-qr-generator">
+                    <div class="card">
+                        <h2><i class="fas fa-qrcode"></i> Generate QR Code</h2>
+                        <form id="qr-form" onsubmit="generateQR(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Product Name *</label>
+                                    <input type="text" id="qr-product" placeholder="e.g. UREA 46%" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Input Type *</label>
+                                    <select id="qr-type" required>
+                                        <option value="fertilizer">Fertilizer</option>
+                                        <option value="pesticide">Pesticide</option>
+                                        <option value="seed">Seed</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Quantity</label>
+                                    <input type="number" id="qr-quantity" placeholder="500">
+                                </div>
+                                <div class="form-group">
+                                    <label>Supplier ID</label>
+                                    <input type="text" id="qr-supplier" placeholder="Optional">
+                                </div>
+                                <div class="form-group">
+                                    <label>Manufacturing Date</label>
+                                    <input type="date" id="qr-mfg">
+                                </div>
+                                <div class="form-group">
+                                    <label>Expiry Date</label>
+                                    <input type="date" id="qr-exp">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-qrcode"></i> Generate QR
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card">
+                        <h2><i class="fas fa-eye"></i> QR Preview</h2>
+                        <div class="qr-display">
+                            <div id="qrcode"></div>
+                            <div class="qr-info">
+                                <div class="title" id="qr-title">No QR Generated</div>
+                                <div class="sub" id="qr-sub">Fill in the form and click Generate</div>
+                            </div>
+                            <div class="qr-actions" id="qr-actions" style="display:none;">
+                                <button class="btn btn-secondary btn-sm" onclick="downloadQR()">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                                <button class="btn btn-secondary btn-sm" onclick="printQR()">
+                                    <i class="fas fa-print"></i> Print
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-scans">
+                    <div class="card">
+                        <h2><i class="fas fa-camera"></i> Scan Log</h2>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead><tr><th>Batch</th><th>Farmer</th><th>Result</th><th>Location</th><th>Time</th></tr></thead>
+                                <tbody id="scan-table"><tr><td colspan="5" style="text-align:center;color:var(--text-secondary)">No scans yet</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-complaints">
+                    <div class="card">
+                        <h2><i class="fas fa-flag"></i> Complaint Management</h2>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead><tr><th>ID</th><th>Batch</th><th>Farmer</th><th>Status</th><th>Action</th></tr></thead>
+                                <tbody id="complaints-table"><tr><td colspan="5" style="text-align:center;color:var(--text-secondary)">No complaints</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page" id="page-settings">
+                    <div class="card">
+                        <h2><i class="fas fa-cog"></i> Settings</h2>
+                        <p style="color:var(--text-secondary)">Account settings and preferences.</p>
+                        <button class="btn btn-secondary" onclick="localStorage.removeItem('token');window.location.href='/auth/login'" style="margin-top:12px">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="toast" class="toast">
+        <i id="toast-icon" class="fas fa-check-circle"></i>
+        <span id="toast-message">Success!</span>
+    </div>
+
+    <script src="/scripts/main.js"></script>
+</body>
+</html>

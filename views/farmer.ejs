@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FieldFlow - Farmer Portal</title>
+  <link rel="stylesheet" href="/styles/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar">
+      <div class="logo"><i class="fas fa-seedling"></i><span>FieldFlow</span></div>
+      <nav>
+        <a href="#" class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+        <a href="#" class="nav-item" data-page="verify"><i class="fas fa-qrcode"></i><span>Verify Product</span></a>
+        <a href="#" class="nav-item" data-page="profile"><i class="fas fa-user"></i><span>My Profile</span></a>
+        <a href="#" class="nav-item" data-page="advisory"><i class="fas fa-cloud-sun"></i><span>Advisory</span></a>
+        <a href="#" class="nav-item" data-page="complaints"><i class="fas fa-flag"></i><span>Complaints</span></a>
+        <a href="#" class="nav-item" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
+      </nav>
+      <div class="user-info">
+        <div class="avatar">FR</div>
+        <div><div class="name">Farmer</div><div class="role">Farmer</div></div>
+      </div>
+    </aside>
+    <main class="main-content">
+      <header class="top-header">
+        <div><h1 id="page-title">Dashboard</h1><span class="subtitle">Farmer Portal</span></div>
+        <div class="header-actions">
+          <div class="connection-status online"><i class="fas fa-cloud-sun"></i><span>Online</span></div>
+          <button class="btn btn-primary btn-sm" onclick="refreshData()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
+      </header>
+      <section class="stats-grid" id="stats-grid">
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-qrcode"></i></div><div class="stat-number" id="stat-scans">0</div><div class="stat-label">Products Verified</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-cloud-sun"></i></div><div class="stat-number" id="stat-advisories">0</div><div class="stat-label">Advisories Received</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-flag"></i></div><div class="stat-number" id="stat-complaints">0</div><div class="stat-label">Complaints Filed</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-clock"></i></div><div class="stat-number" id="stat-pending">0</div><div class="stat-label">Pending</div></div>
+      </section>
+      <div id="page-content">
+        <div class="page active" id="page-dashboard">
+          <div class="dashboard-grid" style="grid-template-columns:1fr 1fr">
+            <div class="card"><h2><i class="fas fa-camera"></i> Recent Scans</h2><div id="scan-feed" style="color:var(--text-secondary)">Loading...</div></div>
+            <div class="card"><h2><i class="fas fa-cloud-sun"></i> Latest Advisory</h2><div id="advisory-feed" style="color:var(--text-secondary)">Loading...</div></div>
+          </div>
+        </div>
+        <div class="page" id="page-verify">
+          <div class="card">
+            <h2><i class="fas fa-qrcode"></i> Verify Product</h2>
+            <p style="color:var(--text-secondary);margin-bottom:16px">Scan QR code or enter code below to verify product authenticity.</p>
+            <form id="verify-form" onsubmit="verifyProduct(event)" style="display:flex;gap:8px">
+              <input type="text" id="verify-code" placeholder="Enter QR Code" required style="flex:1">
+              <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Verify</button>
+            </form>
+            <div id="verify-result" style="display:none;margin-top:16px;padding:16px;border-radius:8px"></div>
+          </div>
+          <div class="card">
+            <h2><i class="fas fa-history"></i> My Scan History</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Product</th><th>Result</th><th>Date</th></tr></thead><tbody id="scan-history-table"><tr><td colspan="3" style="text-align:center;color:var(--text-secondary)">No scans yet</td></tr></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-profile">
+          <div class="card">
+            <h2><i class="fas fa-user"></i> My Profile</h2>
+            <form id="profile-form" onsubmit="updateProfile(event)">
+              <div class="form-grid">
+                <div class="form-group"><label>Name</label><input type="text" id="prof-name" required></div>
+                <div class="form-group"><label>Phone</label><input type="text" id="prof-phone" disabled style="opacity:0.7"></div>
+                <div class="form-group"><label>Upazila / Location</label><input type="text" id="prof-upazila" placeholder="e.g. Gazipur"></div>
+                <div class="form-group"><label>Crop Type</label>
+                  <select id="prof-crop"><option value="">Select crop</option><option value="rice">Rice</option><option value="wheat">Wheat</option><option value="maize">Maize</option><option value="jute">Jute</option><option value="potato">Potato</option><option value="vegetables">Vegetables</option></select>
+                </div>
+                <div class="form-group"><label>Soil Type</label>
+                  <select id="prof-soil"><option value="">Select soil</option><option value="loamy">Loamy</option><option value="clay">Clay</option><option value="sandy">Sandy</option><option value="silty">Silty</option><option value="peaty">Peaty</option></select>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-top:12px"><i class="fas fa-save"></i> Save Profile</button>
+            </form>
+          </div>
+        </div>
+        <div class="page" id="page-advisory">
+          <div class="card">
+            <h2><i class="fas fa-cloud-sun"></i> Get Advisory</h2>
+            <p style="color:var(--text-secondary);margin-bottom:16px">Get personalized farming advice based on your crop, soil, and local weather.</p>
+            <button class="btn btn-primary" onclick="getAdvisory()"><i class="fas fa-magic"></i> Generate Advisory</button>
+            <div id="advisory-result" style="display:none;margin-top:16px;padding:16px;border-radius:8px"></div>
+          </div>
+          <div class="card">
+            <h2><i class="fas fa-history"></i> Advisory History</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Crop</th><th>Condition</th><th>Message</th><th>Date</th></tr></thead><tbody id="advisory-history-table"><tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">No advisories yet</td></tr></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-complaints">
+          <div class="card">
+            <h2><i class="fas fa-flag"></i> File a Complaint</h2>
+            <form id="complaint-form" onsubmit="fileComplaint(event)">
+              <div class="form-grid">
+                <div class="form-group"><label>Batch / QR Code *</label><input type="text" id="comp-code" placeholder="Enter QR code" required></div>
+                <div class="form-group" style="grid-column:1/-1"><label>Description *</label><textarea id="comp-desc" rows="3" placeholder="Describe the issue..." required style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:8px;width:100%"></textarea></div>
+              </div>
+              <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> File Complaint</button>
+            </form>
+          </div>
+          <div class="card">
+            <h2><i class="fas fa-list"></i> My Complaints</h2>
+            <div class="table-wrapper"><table><thead><tr><th>ID</th><th>Product</th><th>Status</th><th>Date</th></tr></thead><tbody id="complaint-table"><tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">No complaints</td></tr></tbody></table></div>
+          </div>
+        </div>
+        <div class="page" id="page-settings">
+          <div class="card"><h2><i class="fas fa-cog"></i> Settings</h2>
+            <p style="color:var(--text-secondary);margin-bottom:8px">Account information and logout.</p>
+            <div id="settings-info" style="margin-bottom:16px"></div>
+            <button class="btn btn-secondary" onclick="localStorage.removeItem('token');window.location.href='/auth/login'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast"><i id="toast-icon" class="fas fa-check-circle"></i><span id="toast-message">Success!</span></div>
+  <script src="/scripts/farmer.js"></script>
+</body>
+</html>

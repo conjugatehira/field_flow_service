@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Product - FieldFlow</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f2a1d; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .card { background: #1a3a2b; padding: 40px; border-radius: 16px; width: 420px; max-width: 90%; }
+    h1 { color: #4caf50; text-align: center; margin-bottom: 24px; }
+    input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #2a4a3a; border-radius: 8px; background: #0f2a1d; color: #fff; font-size: 1em; }
+    button { width: 100%; padding: 12px; background: #4caf50; border: none; border-radius: 8px; color: #fff; font-size: 1em; cursor: pointer; }
+    button:hover { background: #388e3c; }
+    .result { margin-top: 20px; padding: 16px; border-radius: 8px; display: none; }
+    .result.authentic { background: #1b5e20; display: block; }
+    .result.fake { background: #b71c1c; display: block; }
+    .result.info { background: #1a237e; display: block; }
+    .label { color: #a0c0b0; font-size: 0.85em; margin-top: 8px; }
+    .value { font-size: 1.1em; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Verify Product</h1>
+    <input id="qrInput" placeholder="Enter QR Code or scan here">
+    <button onclick="verify()">Check Product</button>
+    <div id="result" class="result"></div>
+  </div>
+  <script>
+    async function verify() {
+      const qrCode = document.getElementById('qrInput').value.trim();
+      if (!qrCode) return;
+      const res = await fetch('/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ qrCode }) });
+      const data = await res.json();
+      const div = document.getElementById('result');
+      if (data.authentic) {
+        div.className = 'result authentic';
+        div.innerHTML = '<div class="value" style="font-size:1.5em;font-weight:bold">&#10003; AUTHENTIC</div>'
+          + '<div class="label">Product</div><div class="value">' + data.product + '</div>'
+          + '<div class="label">Manufactured</div><div class="value">' + data.mfgDate + '</div>'
+          + '<div class="label">Expires</div><div class="value">' + data.expiryDate + '</div>'
+          + (data.expired ? '<div style="color:#ffab40;margin-top:8px">&#9888; This product is EXPIRED</div>' : '')
+          + (data.alreadyScanned ? '<div style="color:#ffab40;margin-top:8px">&#9888; Already scanned before</div>' : '');
+      } else {
+        div.className = 'result fake';
+        div.innerHTML = '<div class="value" style="font-size:1.5em;font-weight:bold">&#10007; ' + (data.reason === 'unknown_code' ? 'UNKNOWN / COUNTERFEIT' : 'FLAGGED') + '</div>'
+          + '<div style="margin-top:8px">' + data.message + '</div>';
+      }
+    }
+  </script>
+</body>
+</html>
